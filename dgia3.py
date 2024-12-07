@@ -30,7 +30,7 @@ def reset_form():
 # Function to save form data to a text file
 def save_form(status_message):
     assessment_date = datetime.now().strftime("%Y-%m-%d")
-    file_name = f"DGIA_{assessed_name.replace(' ', '_')}_{assessment_date}.txt"
+    file_name = f"data/DGIA_{assessed_name.replace(' ', '_')}_{assessment_date}.txt"
     with open(file_name, "w") as f:
         f.write(f"Name of Assessed: {assessed_name}\n")
         f.write(f"Project Name: {project_name}\n")

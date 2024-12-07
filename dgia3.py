@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Nov 11 15:38:46 2024
+Created on Fri Dec  6 21:31:05 2024
 
-@author: BM27701
+@author: bened
 """
 
 import streamlit as st
@@ -28,7 +28,7 @@ def reset_form():
     st.experimental_rerun()
 
 # Function to save form data to a text file
-def save_form():
+def save_form(status_message):
     assessment_date = datetime.now().strftime("%Y-%m-%d")
     file_name = f"DGIA_{assessed_name.replace(' ', '_')}_{assessment_date}.txt"
     with open(file_name, "w") as f:
@@ -38,9 +38,11 @@ def save_form():
         f.write(f"Business Unit Name: {business_unit_name}\n")
         f.write(f"Assessment Date: {assessment_date}\n")
         f.write(f"Total Score: {total_score}\n")
+        f.write(f"Status: {status_message}\n")
     st.success(f"Assessment details saved to {file_name}")
 
 # Questionnaire Sections
+
 st.subheader("1. Data Quality")
 q1_1 = st.selectbox("1.1. Does the system ensure data accuracy through data validation processes?", 
                     ["Select", "Yes, comprehensive data validation checks are in place.", 
@@ -174,17 +176,20 @@ if q7_1 == "Yes, a defined process identifies all CDEs based on risk, value, or 
 elif q7_1 == "Some CDEs are identified, but without a formal process.":
     total_score += 1
 
+# Approval Section
 
-# Approval Decision
 # Submit Button
 if st.button("Submit Assessment"):
     # Capture the date of the assessment
     assessment_date = datetime.now().strftime("%Y-%m-%d")
 
+    # Determine the assessment status
     if total_score >= APPROVAL_THRESHOLD:
-        st.success("Approved: Your system meets the Data Governance Impact Assessment criteria. Please proceed as required.")
+        status_message = "Approved: Your system meets the Data Governance Impact Assessment criteria."
+        st.success(status_message)
     else:
-        st.error("Unapproved: Your system does not meet the Data Governance Impact Assessment criteria. Please review and address the identified areas.")
+        status_message = "Unapproved: Your system does not meet the Data Governance Impact Assessment criteria. Please review and address the identified areas."
+        st.error(status_message)
 
     # Display assessment details
     st.write("### Assessment Details")
@@ -196,9 +201,14 @@ if st.button("Submit Assessment"):
     st.write(f"**Total Score**: {total_score}")
 
 # Reset Button
-if st.button("Reset Form"):
-    reset_form()
+#if st.button("Reset Form"):
+   # reset_form()
 
 # Save Button
 if st.button("Save Assessment"):
-    save_form()
+    if total_score >= APPROVAL_THRESHOLD:
+        status_message = "Approved: Your system meets the Data Governance Impact Assessment criteria."
+    else:
+        status_message = "Unapproved: Your system does not meet the Data Governance Impact Assessment criteria. Please review and address the identified areas."
+
+    save_form(status_message)

@@ -5,8 +5,6 @@ Created on Mon Nov 11 15:38:46 2024
 @author: BM27701
 """
 
-
-
 import streamlit as st
 from datetime import datetime
 
@@ -24,6 +22,23 @@ business_unit_name = st.text_input("Business Unit Name:")
 
 # Section scores
 total_score = 0
+
+# Function to reset the form
+def reset_form():
+    st.experimental_rerun()
+
+# Function to save form data to a text file
+def save_form():
+    assessment_date = datetime.now().strftime("%Y-%m-%d")
+    file_name = f"DGIA_{assessed_name.replace(' ', '_')}_{assessment_date}.txt"
+    with open(file_name, "w") as f:
+        f.write(f"Name of Assessed: {assessed_name}\n")
+        f.write(f"Project Name: {project_name}\n")
+        f.write(f"System Name: {system_name}\n")
+        f.write(f"Business Unit Name: {business_unit_name}\n")
+        f.write(f"Assessment Date: {assessment_date}\n")
+        f.write(f"Total Score: {total_score}\n")
+    st.success(f"Assessment details saved to {file_name}")
 
 # Questionnaire Sections
 st.subheader("1. Data Quality")
@@ -159,13 +174,15 @@ if q7_1 == "Yes, a defined process identifies all CDEs based on risk, value, or 
 elif q7_1 == "Some CDEs are identified, but without a formal process.":
     total_score += 1
 
+
 # Approval Decision
+# Submit Button
 if st.button("Submit Assessment"):
     # Capture the date of the assessment
     assessment_date = datetime.now().strftime("%Y-%m-%d")
 
     if total_score >= APPROVAL_THRESHOLD:
-        st.success("Approved: Your system meets the Data Governance Impact Assessment criteria. Please proceed as required")
+        st.success("Approved: Your system meets the Data Governance Impact Assessment criteria. Please proceed as required.")
     else:
         st.error("Unapproved: Your system does not meet the Data Governance Impact Assessment criteria. Please review and address the identified areas.")
 
@@ -177,3 +194,11 @@ if st.button("Submit Assessment"):
     st.write(f"**Business Unit Name**: {business_unit_name}")
     st.write(f"**Assessment Date**: {assessment_date}")
     st.write(f"**Total Score**: {total_score}")
+
+# Reset Button
+if st.button("Reset Form"):
+    reset_form()
+
+# Save Button
+if st.button("Save Assessment"):
+    save_form()
